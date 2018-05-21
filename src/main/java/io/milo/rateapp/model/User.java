@@ -2,7 +2,7 @@ package io.milo.rateapp.model;
 
 public class User {
 
-    private String uuid;
+    private String id;
     private String name;
     private String surname;
     private String gender;
@@ -18,7 +18,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "uuid='" + uuid + '\'' +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", gender='" + gender + '\'' +
@@ -26,35 +26,48 @@ public class User {
                 '}';
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public User setId(String id) {
+        this.id = id;
+        return this;
+    }
+
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public User setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getSurname() {
         return surname;
     }
 
-    public void setSurname(String surname) {
+    public User setSurname(String surname) {
         this.surname = surname;
+        return this;
     }
 
     public String getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public User setGender(String gender) {
         this.gender = gender;
+        return this;
     }
 
     public String getRegion() {
         return region;
     }
 
-    public void setRegion(String region) {
+    public User setRegion(String region) {
         this.region = region;
+        return this;
     }
 }
