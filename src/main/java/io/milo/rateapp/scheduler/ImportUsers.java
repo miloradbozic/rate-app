@@ -26,18 +26,15 @@ public class ImportUsers {
     UserRepository userRepository;
 
     private static final Logger log = LoggerFactory.getLogger(ImportUsers.class);
-
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
     @Scheduled(fixedRate = 5000)
     public void importSingle() {
-        User user = UinamesUserClient.getClient().getSingle();
+        User user = UinamesUserClient.getClient().getSingle(); // @todo use dependency injection
         try {
             this.userRepository.create(user);
         } catch (IOException e) {
             log.error("Error while inserting user {} to ES:\n {}", user.toString(), e.getMessage());
         }
-
     }
-
 }
