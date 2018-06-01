@@ -1,4 +1,4 @@
-package io.milo.rateapp.repository;
+package io.milo.rateapp.repository.user;
 
 import io.milo.rateapp.model.User;
 import io.milo.rateapp.model.Vote;

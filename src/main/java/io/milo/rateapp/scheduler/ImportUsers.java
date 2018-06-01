@@ -1,16 +1,8 @@
 package io.milo.rateapp.scheduler;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 
-import io.milo.rateapp.client.UinamesUserClient;
-import io.milo.rateapp.model.User;
-import feign.Feign;
-import feign.gson.GsonDecoder;
-import feign.gson.GsonEncoder;
-import feign.okhttp.OkHttpClient;
-import feign.slf4j.Slf4jLogger;
-import io.milo.rateapp.repository.UserRepository;
+import io.milo.rateapp.repository.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +22,13 @@ public class ImportUsers {
 
     @Scheduled(fixedRate = 5000)
     public void importSingle() {
+        /*
         User user = UinamesUserClient.getClient().getSingle(); // @todo use dependency injection
         try {
             this.userRepository.create(user);
         } catch (IOException e) {
             log.error("Error while inserting user {} to ES:\n {}", user.toString(), e.getMessage());
         }
+        */
     }
 }

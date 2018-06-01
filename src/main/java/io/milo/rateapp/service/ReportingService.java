@@ -1,7 +1,7 @@
 package io.milo.rateapp.service;
 
 import io.milo.rateapp.model.User;
-import io.milo.rateapp.repository.UserRepository;
+import io.milo.rateapp.repository.user.ReportingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,37 +12,45 @@ import java.util.Map;
 public class ReportingService {
 
     @Autowired
-    UserRepository userRepository;
+    ReportingRepository reportingRepository;
 
     public User getOverallLead() {
-        User overallLead = null;
         try {
-            overallLead = userRepository.getById("ab0981db-3b30-4bfc-b4bc-107c01e15791");
+            return reportingRepository.getUserWithMostVotes();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return overallLead;
-    }
-
-    public User getLeadForRegion(String region) {
-        User overallLead = null;
-        try {
-            overallLead = userRepository.getById("468b8ebe-2e74-42ed-8349-3951ba1719ec");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return overallLead;
+        return null; // @todo
     }
 
     public String getRegionWithMostVotes() {
-        return "england";
+        try {
+            return reportingRepository.getRegionWithMostVotes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public String getRegionWhichVotedMost() {
-        return "england";
+        try {
+            return reportingRepository.getRegionWhichVotedMost();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public Map<String, User> getLeadsForAllRegions() {
+        try {
+            return reportingRepository.getLeadUsersForAllRegions();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
+    }
+
+    public User getLeadForRegion(String region) {
+        return this.getLeadsForAllRegions().get(region);
     }
 }

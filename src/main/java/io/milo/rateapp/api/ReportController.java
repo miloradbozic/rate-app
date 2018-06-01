@@ -22,7 +22,7 @@ public class ReportController {
 
     @Autowired
     private ReportingService reportingService;
-    
+
     @RequestMapping(value = "/user/lead", method = GET)
     public User lead() {
         User lead = reportingService.getOverallLead();
@@ -35,8 +35,8 @@ public class ReportController {
         return lead;
     }
 
-    @RequestMapping(value = "/region/lead", method = GET)
-    public String regionMostVotes() {
+    @RequestMapping(value = "/region/most-votes", method = GET)
+        public String regionMostVotes() {
         String region = reportingService.getRegionWithMostVotes();
         return region;
     }

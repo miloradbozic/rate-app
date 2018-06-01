@@ -1,8 +1,8 @@
 package io.milo.rateapp.service;
 
 import io.milo.rateapp.model.Vote;
-import io.milo.rateapp.repository.UserRepository;
-import io.milo.rateapp.repository.VoteRepository;
+import io.milo.rateapp.repository.user.UserRepository;
+import io.milo.rateapp.repository.user.VoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import io.milo.rateapp.model.User;
@@ -25,6 +25,7 @@ public class VotingService {
     VoteRepository voteRepository;
 
     public void vote(String votingUserId, String[] votedUserIds) {
+
         User votingUser = this.getUser(votingUserId);
         List<Vote> previousVotes = this.getVotes(votingUser);
         try {
@@ -43,7 +44,9 @@ public class VotingService {
 
             votedUsers.forEach( votedUser -> this.addVote(votingUser, votedUser));
         } catch (RuntimeException e) {
+            //@ todo error handling
             System.out.println("Voting transaction failed: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -64,7 +67,6 @@ public class VotingService {
     }
 
     private void addVote(User voter, User voted) {
-        System.out.println("Adding vote");
         try {
             this.voteRepository.addVote(voter, voted);
         } catch (Exception e) {

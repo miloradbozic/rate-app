@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface UinamesUserClient {
 
-    @RequestLine("GET /?region=england")
+    @RequestLine("GET /")
     User getSingle();
 
     @RequestLine("GET /?region={region}")

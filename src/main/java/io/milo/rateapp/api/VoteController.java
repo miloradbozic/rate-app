@@ -19,11 +19,12 @@ public class VoteController {
     private VotingService votingService;
 
     @RequestMapping(value = "/add", method = POST)
-    public String add(@RequestParam("voterId") String uuid, @RequestParam("voteeIds") String[] voteeIds) {
-        votingService.vote(uuid, voteeIds);
+    public String add(@RequestParam("voterId") String uuid, @RequestParam("votedIds") String[] votedIds) {
+        votingService.vote(uuid, votedIds);
+        // @todo proper response
         String response = "voting: " + uuid + ", ";
-        response += Arrays.stream(voteeIds).collect(Collectors.joining(", "));
-        return response;
+        response += Arrays.stream(votedIds).collect(Collectors.joining(", "));
+        return "ok";
     }
 
 }
