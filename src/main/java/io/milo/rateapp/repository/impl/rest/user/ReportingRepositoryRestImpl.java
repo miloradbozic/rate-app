@@ -82,8 +82,6 @@ public class ReportingRepositoryRestImpl extends AbstractRestRepository implemen
     @Override
     public String getRegionWhichVotedMost() throws IOException {
 
-        final String endpoint = USER_SEARCH_ENDPOINT;
-
         String body = jsonBuilder()
                 .startObject()
                     .startObject("aggregations")
@@ -105,18 +103,13 @@ public class ReportingRepositoryRestImpl extends AbstractRestRepository implemen
                 .endObject()
                 .string();
 
-        RestResponse response = this.getRequest(endpoint, body);
-        List regions = response.extract("$.aggregations.regions.buckets[*].count.vale");
-
-        Object res = regions.stream().map(bucket -> (LinkedHashMap) bucket).max((m1, m2) -> {
-            int c1 = (int) ((LinkedHashMap) ((LinkedHashMap) m1).get("count")).get("value");
-            int c2 = (int) ((LinkedHashMap) ((LinkedHashMap) m1).get("count")).get("value");
-            return c1 > c2 ? c1 : c2;
-        }).get();
-
-
-
-        return null;
+        RestResponse response = this.getRequest(USER_SEARCH_ENDPOINT, body);
+        List timesVotes = response.extract("$.aggregations.regions.buckets[*].count.value");
+        int maxVoted = timesVotes.stream().mapToInt(e -> ((Double)e).intValue()).max().getAsInt();
+        List maxVotedRegions = response.extract(
+                "$.aggregations.regions.buckets[?(@.count.value == " + maxVoted + " )].key"
+        );
+        return (String)maxVotedRegions.get(0);
     }
 
     @Override

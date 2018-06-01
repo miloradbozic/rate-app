@@ -3,14 +3,19 @@ package io.milo.rateapp.service;
 import io.milo.rateapp.model.Vote;
 import io.milo.rateapp.repository.user.UserRepository;
 import io.milo.rateapp.repository.user.VoteRepository;
+import io.milo.rateapp.service.voting.VotingConstraint;
+import io.milo.rateapp.service.voting.VotingEngine;
+import io.milo.rateapp.service.voting.constraint.CheckDuplicateVote;
+import io.milo.rateapp.service.voting.constraint.CheckVoteForSelf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import io.milo.rateapp.model.User;
+
+import javax.xml.bind.ValidationException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,29 +29,31 @@ public class VotingService {
     @Autowired
     VoteRepository voteRepository;
 
-    public void vote(String votingUserId, String[] votedUserIds) {
+    @Autowired
+    VotingEngine votingEngine;
 
+    public void vote(String votingUserId, String[] votedUserIds) {
         User votingUser = this.getUser(votingUserId);
         List<Vote> previousVotes = this.getVotes(votingUser);
+        List<User> votedUsers = Arrays.stream(votedUserIds)
+                .map(id -> this.getUser(id))
+                .collect(Collectors.toList());
+
+        this.votingEngine.init(votingUser, votedUsers, previousVotes);
+        this.votingEngine.addConstraints(new ArrayList<VotingConstraint>() {{
+                add(new CheckDuplicateVote());
+                add(new CheckVoteForSelf());
+                add(new CheckVoteForSelf());
+                add(new CheckVoteForSelf());
+                add(new CheckVoteForSelf());
+            }}
+        );
+
         try {
-            this.checkVoteForSelf(votingUser, votedUserIds);
-            this.checkDuplicateVote(votedUserIds);
-            this.checkMaxVotesLimitPassed(previousVotes, votedUserIds);
-
-            List<User> votedUsers = Arrays.stream(votedUserIds)
-                    .map(id -> this.getUser(id))
-                    //.map(votedUser -> this.checkAlreadyHasVote(previousVotes, votedUser))
-                    //.map(votedUser -> this.checkGenderUnequality(previousVotes, votedUser))
-                    //.map(votedUser -> this.checkSameRegionTimeConstraint(votingUser, previousVotes, votedUser))
-                    .collect(Collectors.toList());
-
-            //this.checkDuplicateRegion(votedUsers);
-
-            votedUsers.forEach( votedUser -> this.addVote(votingUser, votedUser));
-        } catch (RuntimeException e) {
-            //@ todo error handling
+            this.votingEngine.vote();
+        } catch (ValidationException e) {
             System.out.println("Voting transaction failed: " + e.getMessage());
-            e.printStackTrace();
+            //@todo return appropriate response
         }
     }
 
@@ -66,30 +73,21 @@ public class VotingService {
         }
     }
 
-    private void addVote(User voter, User voted) {
-        try {
-            this.voteRepository.addVote(voter, voted);
-        } catch (Exception e) {
-            throw new RuntimeException("Can not perform vote operation");
-        }
-    }
-
-    protected User checkVoteForSelf(User voter, String[] votedIds) {
-        if (Arrays.stream(votedIds).anyMatch(id -> id.equals(voter.getId()))) {
-            throw new RuntimeException("Voter can not vote for himself.");
-        }
-        return voter;
-    }
-
-    protected void checkDuplicateVote(String[] votedIds) {
-        Set<String> ids = new HashSet<>();
-        Arrays.stream(votedIds).forEach(id -> {
-            if (!ids.add(id)) {
-                throw new RuntimeException("Voter can not vote for the same user multiple times (id " + id + " repeated).");
-            }
+    /*
+    protected void checkAllConstraints(User votingUser, List<User> votedUsers, List<Vote> previousVotes) {
+        this.checkVoteForSelf(votingUser, votedUsers);
+        this.checkDuplicateVote(votedUsers);
+        this.checkMaxVotesLimitPassed(previousVotes, votedUserIds);
+        this.checkDuplicateRegion(votedUsers);
+        votedUsers.stream().forEach( user -> {
+            this.checkAlreadyHasVote(previousVotes, user);
+            this.checkGenderUnequality(previousVotes, user);
+            this.checkSameRegionTimeConstraint(votingUser, previousVotes, user);
         });
     }
+    */
 
+    /*
     protected User checkAlreadyHasVote(List<Vote> votes, User votedUser) {
         if (votes.stream().anyMatch(v -> v.getVotedUserId().equals(votedUser.getId()))) {
             throw new RuntimeException("Voter already voted for user with id " + votedUser.getId() + ".");
@@ -99,7 +97,7 @@ public class VotingService {
 
     protected void checkMaxVotesLimitPassed(List<Vote> votes, String[] votedIds) {
         if (votes.size() + votedIds.length > MAXIMUM_VOTES) {
-            throw new RuntimeException("Voter can not have more than " + MAXIMUM_VOTES + " number of votes.");
+            throw new RuntimeException("Voter can not have more than " + MAXIMUM_VOTES + " votes.");
         }
     }
 
@@ -117,11 +115,6 @@ public class VotingService {
 
     // @todo
     protected User checkSameRegionTimeConstraint(User votingUser, List<Vote> votes, User votedUser) {
-        /*
-        if (voter.getRegion().equals(voted.getRegion()) &&
-                votes.stream().filter(v -> v.getRegion().equals(voter.getRegion()))
-                        .max(v -> v.getVotedTime()).
-                        */
         return votedUser;
     }
 
@@ -133,4 +126,5 @@ public class VotingService {
             }
         });
     }
+    */
 }
