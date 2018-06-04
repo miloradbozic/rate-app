@@ -29,11 +29,11 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 
     private ApiInfo apiInfo() {
         return new ApiInfo(
-                "My REST API",
-                "Some custom description of API.",
+                "Rate App API",
+                "API endpoints for user interaction, component and reporting",
                 "API TOS",
                 "Terms of service",
-                new Contact("John Doe", "www.example.com", "myeaddress@company.com"),
+                new Contact("Milorad Bozic", "www.milo.io", "hello@milo.io"),
                 "License of API", "API license URL", Collections.emptyList());
     }
 
