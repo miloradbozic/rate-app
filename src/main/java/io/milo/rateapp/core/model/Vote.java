@@ -9,6 +9,10 @@ public class Vote {
     private String region;
     private Date votedTime;
 
+    public Vote(User votingUser, User votedUser, Date votedTime) {
+        this(votingUser.getId(), votedUser.getId(), votedUser.getGender(), votedUser.getRegion(), votedTime);
+    }
+
     public Vote(String votingUserId, String votedUserId, String gender, String region, Date votedTime) {
         this.votingUserId = votingUserId;
         this.votedUserId = votedUserId;

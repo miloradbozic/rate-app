@@ -59,8 +59,7 @@ public class ElasticRestBaseRepository {
         Response response = this.client().performRequest(method, endpoint);
         return this.restResponse(response);
     }
-
-    // @todo parametrize localhost from application.properties
+    
     private RestClient client() {
         return RestClient.builder(
                 new HttpHost(this.hostname, this.port, "http")).build();

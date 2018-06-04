@@ -13,6 +13,11 @@ public class CheckDuplicateVote extends AbstractVotingConstraint implements Voti
     @Override
     public boolean check() {
         Set<String> ids = new HashSet<>();
+
+        this.getEngine().getExistingVotes().stream().forEach( v -> {
+            ids.add(v.getVotedUserId());
+        });
+
         return this.getEngine().getVotedUsers().stream().map(User::getId).allMatch(id -> {
             if (!ids.add(id)) {
                 return false;
@@ -23,6 +28,6 @@ public class CheckDuplicateVote extends AbstractVotingConstraint implements Voti
 
     @Override
     public String getValidationMessage() {
-        return "Voter can not vote for the same user multiple times.";
+        return "Voter can not vote for the same user multiple times";
     }
 }

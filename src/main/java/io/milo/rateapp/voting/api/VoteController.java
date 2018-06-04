@@ -44,11 +44,8 @@ public class VoteController {
     public List<Vote> add(@RequestParam("voterId") String votingUserId,
                               @RequestParam("votedIds") String[] votedUserIds) {
         User votingUser = this.getUser(votingUserId);
-        List<Vote> existingVotes = this.getVotes(votingUser);
         List<User> votedUsers = this.getVotedUsers(votedUserIds);
-        this.votingService.vote(votingUser, votedUsers, existingVotes);
-
-        return this.getVotes(votingUser);
+        return this.votingService.vote(votingUser, votedUsers);
     }
 
     private User getUser(String id) throws ApiEntityNotFoundException {
@@ -56,14 +53,6 @@ public class VoteController {
             return this.userRepository.getById(id);
         } catch (IOException e) {
             throw new ApiEntityNotFoundException("Can not retrieve user with id " + id);
-        }
-    }
-
-    private List<Vote> getVotes(User user) {
-        try {
-            return this.voteRepository.getVotes(user);
-        } catch (IOException e) {
-            throw new ApiEntityNotFoundException("Can not retrieve votes for user with id " + user.getId());
         }
     }
 

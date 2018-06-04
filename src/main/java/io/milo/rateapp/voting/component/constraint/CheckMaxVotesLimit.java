@@ -18,6 +18,6 @@ public class CheckMaxVotesLimit extends AbstractVotingConstraint implements Voti
 
     @Override
     public String getValidationMessage() {
-        return "Voter can not have more than " + MAXIMUM_VOTES + " votes.";
+        return "Voter can not have more than " + MAXIMUM_VOTES + " votes";
     }
 }

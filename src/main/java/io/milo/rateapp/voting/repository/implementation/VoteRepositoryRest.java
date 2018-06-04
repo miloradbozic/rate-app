@@ -35,7 +35,7 @@ public class VoteRepositoryRest extends ElasticRestBaseRepository implements Vot
                 .field("inline", "ctx._source.votes.add(params.vote)")
                 .startObject("params")
                     .startObject("vote")
-                        .field("id", vote.getVotedUserId())
+                        .field("votedUserId", vote.getVotedUserId())
                         .field("region", vote.getRegion())
                         .field("gender", vote.getGender())
                         .field("votedTime", vote.getVotedTime())
@@ -50,12 +50,7 @@ public class VoteRepositoryRest extends ElasticRestBaseRepository implements Vot
 
     @Override
     public void addVote(User votingUser, User votedUser) throws IOException {
-        this.addVote(new Vote(
-                votingUser.getId(),
-                votedUser.getId(),
-                votedUser.getGender(),
-                votedUser.getRegion(),
-                new Date())
+        this.addVote(new Vote(votingUser, votedUser, new Date())
         );
     }
 
@@ -73,7 +68,9 @@ public class VoteRepositoryRest extends ElasticRestBaseRepository implements Vot
         JsonArray votesJson = jsonElement.get("_source").getAsJsonObject().get("votes").getAsJsonArray();
         List<Vote> votes = new ArrayList<>();
         for(JsonElement voteJson : votesJson) {
-            votes.add(gson.fromJson(voteJson, Vote.class));
+            Vote v = gson.fromJson(voteJson, Vote.class);
+            v.setVotingUserId(jsonElement.get("_id").getAsString());
+            votes.add(v);
         }
         return votes;
     }

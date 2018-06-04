@@ -41,7 +41,7 @@
         "votes": {
           "type": "nested",
           "properties": {
-            "voted_id": {
+            "votedUserId": {
               "type": "text",
               "fields": {
                 "keyword": {
@@ -68,7 +68,7 @@
                 }
               }
             },
-            "votedTime": {
+            "voted_time": {
               "type": "date"
             }
           }
